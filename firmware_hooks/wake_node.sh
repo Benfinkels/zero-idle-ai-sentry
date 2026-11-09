@@ -3,8 +3,8 @@
 # Place at: /system/sdcard/config/userscripts/motiondetection/wake_node.sh
 # Automatically broadcasts a Wake-on-LAN Magic Packet to wake the sleeping AI Agent node.
 
-TARGET_MAC="${SENTRY_TARGET_MAC:-30:9C:23:85:0F:74}"
-BROADCAST_IP="${SENTRY_BROADCAST_IP:-192.168.86.255}"
+TARGET_MAC="${SENTRY_TARGET_MAC:-00:11:22:33:44:55}"
+BROADCAST_IP="${SENTRY_BROADCAST_IP:-192.168.1.255}"
 
 # BusyBox ether-wake or raw UDP magic packet
 if command -v ether-wake >/dev/null 2>&1; then
