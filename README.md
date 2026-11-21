@@ -43,6 +43,8 @@ sequenceDiagram
 
 ## 🔋 Hybrid Day/Night Power Schedule & Green FinOps
 
+![Zero-Idle AI Doorbell Sentry Power Draw and Parallel Wake Profile](docs/power_and_wake_profile.png)
+
 | Time Window (Local) | Idle Target State | Server Power Draw | Wake Latency | Wake Mechanism & Transition |
 | :--- | :--- | :--- | :--- | :--- |
 | **Daytime (`07:00 – 23:00`)** | **ACPI S3 Suspend-to-RAM** | **`~2.5 W`** (Camera `2.5W` + RAM `2.5W`) | **`~3.5 sec`** | Wakes via camera **Wake-on-LAN** (`GLAN`); arms hardware RTC wake alarm (`/sys/class/rtc/rtc0/wakealarm`) for `23:00` night shutdown. |
