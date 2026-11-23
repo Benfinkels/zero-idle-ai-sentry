@@ -125,3 +125,37 @@ def build_dafang_camera_url(camera_ip: str, action: str) -> str:
     if action not in routes:
         raise ValueError(f"Unsupported camera action: {action!r}")
     return routes[action]
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        prog="python -m sentry.orchestrator",
+        description="Calculate annual kWh and electricity savings from waking your GPU server on demand.",
+    )
+    parser.add_argument("--camera-watts", type=float, default=2.5, help="Always-on edge camera draw in watts (default: 2.5)")
+    parser.add_argument("--server-watts", type=float, default=140.0, help="GPU server idle/active draw when awake in watts (default: 140)")
+    parser.add_argument("--workstation-watts", type=float, default=0.0, help="Optional secondary GPU workstation watts if left on 24/7 (default: 0)")
+    parser.add_argument("--active-minutes", type=float, default=25.0, help="Average awake minutes per day for the GPU server (default: 25)")
+    parser.add_argument("--sleep-watts", type=float, default=2.5, help="S3 sleep power draw in watts (default: 2.5)")
+    parser.add_argument("--rate", type=float, default=0.18, help="Electricity rate in $/kWh (default: 0.18)")
+    args = parser.parse_args(argv)
+
+    rep = calculate_zero_idle_finops(
+        sentry_watts=args.camera_watts,
+        edge_node_watts=args.server_watts,
+        titan_node_watts=args.workstation_watts,
+        daily_active_minutes_edge=args.active_minutes,
+        daily_active_minutes_titan=0.0,
+        s3_sleep_watts=args.sleep_watts,
+        electricity_rate_per_kwh=args.rate,
+    )
+    print(f"Always-on (24/7):   {rep.always_on_kwh_per_year:,.1f} kWh/yr  (${rep.always_on_kwh_per_year * args.rate:,.2f}/yr)")
+    print(f"Zero-idle (S3/WoL): {rep.ephemeral_kwh_per_year:,.1f} kWh/yr  (${rep.ephemeral_kwh_per_year * args.rate:,.2f}/yr)")
+    print(f"Saved:              {rep.kwh_saved_per_year:,.1f} kWh/yr  (${rep.dollars_saved_per_year:,.2f}/yr, -{rep.efficiency_gain_pct:.1f}%)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

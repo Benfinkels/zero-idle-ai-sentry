@@ -1,14 +1,28 @@
 # ⚡ Zero-Idle AI Doorbell Sentry (v2): 2.5W Edge Wake-on-LAN Tripwire & Day/Night S3/S5 GPU Orchestrator
 
+[![CI](https://github.com/Benfinkels/zero-idle-ai-sentry/actions/workflows/ci.yml/badge.svg)](https://github.com/Benfinkels/zero-idle-ai-sentry/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Ollama](https://img.shields.io/badge/Ollama-Gemma_4_E2B-black?logo=ollama)](https://ollama.ai)
 [![Power Draw](https://img.shields.io/badge/Idle_Power-2.5W_Day_%7C_0W_Night-10B981)](#)
 [![Energy Savings](https://img.shields.io/badge/Energy_Saved-%3E97%25-2ea44f)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+**Cut an always-on AI homelab camera setup from `142.5W` down to `5.0W` (day) / `2.5W` (night) — over 97% less idle power — using a \$20 hacked Wyze Cam to wake a sleeping GPU box on demand in `3.5s`.**
+
+![Zero-Idle AI Doorbell Sentry Power Draw and Parallel Wake Profile](docs/power_and_wake_profile.png)
+
 > **Evolution of [🎃 Trick-or-Treat Sentry (v1)](https://github.com/Benfinkels/trick-or-treat-sentry-):**  
-> In **v1**, our GPU homelab server stayed awake (`~140W`) polling the porch camera on Halloween night to classify trick-or-treater costumes with local `Gemma 4`.  
-> In **v2 (`zero-idle-ai-sentry`)**, we inverted the architecture for 365-day production: the **GPU server stays asleep or powered off (`2.5W` S3 RAM sleep during the day, `0W` S5 full shutdown at night)** while a liberated **2.5W Ingenic T20 MIPS Linux camera (`Dafang-Hacks`)** acts as an always-on hardware tripwire that wakes the GPU server via **Wake-on-LAN** only when motion occurs on the front walkway.
+> In **v1**, the GPU server stayed awake 24/7 (`~140W`) polling the porch camera to run local `Gemma 4` vision checks.  
+> In **v2 (`zero-idle-ai-sentry`)**, the architecture is inverted for 365-day use: the **GPU server stays asleep (`2.5W` S3 RAM sleep during the day) or completely off (`0W` S5 shutdown at night)** while a liberated **2.5W Ingenic T20 MIPS Linux camera (`Dafang-Hacks`)** acts as an always-on hardware tripwire that wakes the server via **Wake-on-LAN** only when walkway motion happens.
+
+### Try the Power Savings Calculator & Offline Tests (No Hardware Needed)
+```bash
+git clone https://github.com/Benfinkels/zero-idle-ai-sentry.git
+cd zero-idle-ai-sentry
+python -m sentry.orchestrator --server-watts 140 --rate 0.18
+pip install -r requirements.txt
+python -m unittest tests/test_sentry.py -v
+```
 
 ---
 
@@ -42,8 +56,6 @@ sequenceDiagram
 ---
 
 ## 🔋 Hybrid Day/Night Power Schedule & Green FinOps
-
-![Zero-Idle AI Doorbell Sentry Power Draw and Parallel Wake Profile](docs/power_and_wake_profile.png)
 
 | Time Window (Local) | Idle Target State | Server Power Draw | Wake Latency | Wake Mechanism & Transition |
 | :--- | :--- | :--- | :--- | :--- |

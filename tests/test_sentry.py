@@ -110,6 +110,12 @@ def test_sms_body_fits_carrier_160_char_limit_with_photo_link():
     assert "Photo: https://is.gd/example" in sms
 
 
+def test_finops_cli_runs_cleanly():
+    from sentry.orchestrator import main
+
+    assert main(["--server-watts", "140", "--rate", "0.18"]) == 0
+
+
 class TestZeroIdleSentry(unittest.TestCase):
     def test_all(self):
         test_green_finops_saves_over_95_percent_energy()
@@ -122,6 +128,7 @@ class TestZeroIdleSentry(unittest.TestCase):
         test_unlit_night_luma_gate()
         test_gemma4_json_fence_stripping()
         test_sms_body_fits_carrier_160_char_limit_with_photo_link()
+        test_finops_cli_runs_cleanly()
 
 
 if __name__ == "__main__":
